@@ -39,8 +39,7 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
         win.opened = 0;
         return win;
     }
-    else
-        win.opened = 1;
+    win.opened = 1;
 
     /* Creating the window. */
     win.xcbwin = xcb_generate_id(c);
@@ -63,6 +62,8 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
             XCB_ATOM_STRING, 8, strlen(title), title);
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_NAME,
             XCB_ATOM_STRING, 8, strlen(title), title);
+    xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_VISIBLE_NAME,
+            XCB_ATOM_STRING, 8, strlen(title), title);
 
     /* Setting EWMH parameters. */
     values[0] = 0xFFFFFFFF;
@@ -80,9 +81,6 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
 
 int opened(srv_window_t win)
 {
-    if(!win.opened)
-        return 0;
-    else
-        return 1;
+    return win.opened;
 }
 
