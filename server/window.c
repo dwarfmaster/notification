@@ -99,11 +99,14 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
     hints.initial_state = XCB_ICCCM_WM_STATE_NORMAL;
     xcb_icccm_set_wm_hints(c, win.xcbwin, &hints);
 
-    xcb_icccm_size_hints_set_position(&size, 0, x, y);
-    xcb_icccm_size_hints_set_position(&size, 1, x, y);
-    xcb_icccm_size_hints_set_position(&size, 0, w, h);
-    xcb_icccm_size_hints_set_position(&size, 1, w, h);
-    xcb_icccm_size_hints_set_win_gravity(&size, XCB_GRAVITY_STATIC);
+    size.flags = XCB_ICCCM_SIZE_HINT_P_POSITION
+        | XCB_ICCCM_SIZE_HINT_P_SIZE
+        | XCB_ICCCM_SIZE_HINT_P_WIN_GRAVITY;
+    size.x = x;
+    size.y = y;
+    size.width = w;
+    size.height = h;
+    size.win_gravity = XCB_GRAVITY_STATIC;
     xcb_icccm_set_wm_size_hints(c, win.xcbwin, XCB_ATOM_WM_NORMAL_HINTS, &size);
     xcb_icccm_set_wm_size_hints(c, win.xcbwin, XCB_ATOM_WM_SIZE_HINTS, &size);
 
