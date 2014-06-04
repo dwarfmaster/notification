@@ -32,23 +32,22 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
         const char* title)
 {
     srv_window_t win;
-    win.opened = 0;
     uint32_t mask;
     uint32_t values[2];
 
     if(!has_ewmh()) {
-        win.valid = 0;
+        win.opened = 0;
         return win;
     }
     else
-        win.valid = 1;
+        win.opened = 1;
 
     /* Creating the window. */
     win.xcbwin = xcb_generate_id(c);
     mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
     values[0] = scr->black_pixel;
     values[1] = XCB_EVENT_MASK_EXPOSURE;
-    win.cookie = xcb_create_window(c,
+    xcb_create_window(c,
             XCB_COPY_FROM_PARENT,
             win.xcbwin,
             scr->root,
@@ -79,22 +78,11 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
     return win;
 }
 
-int opened(xcb_connection_t* c, srv_window_t win)
+int opened(srv_window_t win)
 {
-    if(!win.valid)
-        return -1;
-    if(win.opened)
+    if(!win.opened)
+        return 0;
+    else
         return 1;
-
-    xcb_generic_error_t* err;
-    err = xcb_request_check(c, win.cookie);
-    if(err != NULL) {
-        free(err);
-        return -1;
-    }
-    else {
-        win.opened = 1;
-        return 1;
-    }
 }
 

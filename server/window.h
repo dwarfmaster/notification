@@ -6,9 +6,7 @@
 
 typedef struct _srv_window_t {
     xcb_window_t xcbwin;
-    xcb_void_cookie_t cookie;
     int opened;
-    int valid;
 } srv_window_t;
 
 /** Request the EWMH data. */
@@ -24,7 +22,7 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
         );
 /** Check if the window has been openend : return -1 on failure,
  * 0 if its still pending and 1 if the window has been opened. */
-int opened(xcb_connection_t* c, srv_window_t win);
+int opened(srv_window_t win);
 
 #endif
 

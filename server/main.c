@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     /* Opening the window. */
     open_window(c, scr, 800, 450, 100, 100, "Test window");
     xcb_flush(c);
-    if(opened(c, win) < 0)
+    if(!opened(win))
         return 1;
 
     pause();
