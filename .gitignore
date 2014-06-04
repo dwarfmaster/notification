@@ -4,3 +4,7 @@
 *.a
 *.prog
 
+# Temp files
+*~
+*.swp
+
