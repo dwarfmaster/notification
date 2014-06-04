@@ -78,11 +78,11 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
             XCB_ATOM_INTEGER, 32, 1, &values[0]);
 
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
-            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_DIALOG));
+            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_TOOLTIP));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_NOTIFICATION));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
-            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_TOOLTIP));
+            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_DIALOG));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_NORMAL));
 
@@ -105,7 +105,9 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
     xcb_icccm_set_wm_hints(c, win.xcbwin, &hints);
 
     size.flags = XCB_ICCCM_SIZE_HINT_P_POSITION
+        | XCB_ICCCM_SIZE_HINT_US_POSITION
         | XCB_ICCCM_SIZE_HINT_P_SIZE
+        | XCB_ICCCM_SIZE_HINT_US_SIZE
         | XCB_ICCCM_SIZE_HINT_P_WIN_GRAVITY;
     size.x = x;
     size.y = y;
