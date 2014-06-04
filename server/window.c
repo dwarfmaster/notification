@@ -70,7 +70,7 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_DESKTOP,
             XCB_ATOM_INTEGER, 32, 1, &values[0]);
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
-            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_NOTIFICATION));
+            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_DIALOG));
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_STATE,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_STATE_STICKY));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_STATE,
