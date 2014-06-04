@@ -1,0 +1,6 @@
+# C compiled files
+*.o
+*.so
+*.a
+*.prog
+
