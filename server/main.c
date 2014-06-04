@@ -17,11 +17,11 @@ int main(int argc, char *argv[])
     /* Getting EWMH */
     request_ewmh(c);
     xcb_flush(c);
-    if(!has_ewmh(c))
+    if(!has_ewmh())
         return 1;
 
     /* Opening the window. */
-    open_window(c, scr, 800, 450, 100, 100, "Test window");
+    win = open_window(c, scr, 800, 450, 100, 100, "Test window");
     xcb_flush(c);
     if(!opened(win))
         return 1;
