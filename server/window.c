@@ -75,6 +75,8 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_STATE_STICKY));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_STATE,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_STATE_ABOVE));
+    xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_STATE,
+            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_STATE_SKIP_TASKBAR));
 
     return win;
 }
