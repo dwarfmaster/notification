@@ -103,12 +103,16 @@ static char* chomp_string(char* val)
             (val[i] == ' ' || val[i] == '\t' || val[i] == '\n'))
         ++i;
     str += i;
+    if(str[0] == '"' || str[0] == '\'')
+        ++str;
 
     i = len - 1;
     while(i >= 0 &&
             (val[i] == ' ' || val[i] == '\t' || val[i] == '\n'))
         --i;
     val[i+1] = '\0';
+    if(val[i] == '"' || val[i] == '\'')
+        val[i] = '\0';
 
     return str;
 }
@@ -123,7 +127,7 @@ static void parse_line(char* line)
     int intok = 1;
 
     for(id = 0; id < strlen(line); ++id) {
-        if(line[id] == '#')
+        if(line[id] == '!')
             break;
         else if(intok && (line[id] == '.' || line[id] == '/')) {
             token[secid] = '\0';
