@@ -100,7 +100,7 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
 
     /* Setting ICCCM hints. */
     hints.flags = XCB_ICCCM_WM_HINT_INPUT | XCB_ICCCM_WM_HINT_STATE;
-    hints.input = 1;
+    hints.input = 0;
     hints.initial_state = XCB_ICCCM_WM_STATE_NORMAL;
     xcb_icccm_set_wm_hints(c, win.xcbwin, &hints);
 
