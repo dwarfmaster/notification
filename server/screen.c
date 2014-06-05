@@ -1,6 +1,7 @@
 
 #include "screen.h"
 #include <xcb/xinerama.h>
+#include <xcb/xinput.h>
 #include <stdlib.h>
 
 srv_screen_t* load_screens(xcb_connection_t* c)
@@ -47,5 +48,11 @@ void free_screens(srv_screen_t* scr)
         free(scr);
         scr = next;
     }
+}
+
+srv_screen_t* focused(xcb_connection_t* c, srv_screen_t* scr)
+{
+    /* TODO find a way to detect focused screen. */
+    return scr;
 }
 
