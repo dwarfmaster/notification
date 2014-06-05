@@ -36,7 +36,7 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
     xcb_icccm_wm_hints_t hints;
     xcb_size_hints_t size;
     uint32_t mask;
-    uint32_t values[2];
+    uint32_t values[3];
 
     if(!has_ewmh()) {
         win.opened = 0;
@@ -46,9 +46,12 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
 
     /* Creating the window. */
     win.xcbwin = xcb_generate_id(c);
-    mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+    mask = XCB_CW_BACK_PIXEL
+        | XCB_CW_OVERRIDE_REDIRECT
+        | XCB_CW_EVENT_MASK;
     values[0] = scr->black_pixel;
-    values[1] = XCB_EVENT_MASK_EXPOSURE;
+    values[1] = 1;
+    values[2] = XCB_EVENT_MASK_EXPOSURE;
     xcb_create_window(c,
             XCB_COPY_FROM_PARENT,
             win.xcbwin,
@@ -78,9 +81,9 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
             XCB_ATOM_INTEGER, 32, 1, &values[0]);
 
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
-            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_TOOLTIP));
-    xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_NOTIFICATION));
+    xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
+            XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_TOOLTIP));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
             XCB_ATOM_ATOM, 32, 1, &(_ewmh._NET_WM_WINDOW_TYPE_DIALOG));
     xcb_change_property(c, XCB_PROP_MODE_APPEND, win.xcbwin, _ewmh._NET_WM_WINDOW_TYPE,
