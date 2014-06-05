@@ -9,7 +9,6 @@ srv_screen_t* load_screens(xcb_connection_t* c)
     srv_screen_t* act;
     srv_screen_t* first = NULL;
     xcb_screen_t* xcbscr = xcb_setup_roots_iterator(xcb_get_setup(c)).data;
-    xcb_xinerama_screen_info_t scrinfo;
     xcb_xinerama_screen_info_iterator_t it;
     xcb_xinerama_query_screens_reply_t* reply;
     xcb_xinerama_query_screens_cookie_t cookie;
