@@ -70,11 +70,6 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_VISIBLE_NAME,
             XCB_ATOM_STRING, 8, strlen(title), title);
 
-    /* Transient for. */
-    values[0] = scr->root;
-    xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, XCB_ATOM_WM_TRANSIENT_FOR,
-            XCB_ATOM_WINDOW, 32, 1, &values[0]);
-
     /* Setting EWMH parameters. */
     values[0] = 0xFFFFFFFF;
     xcb_change_property(c, XCB_PROP_MODE_REPLACE, win.xcbwin, _ewmh._NET_WM_DESKTOP,
