@@ -93,11 +93,32 @@ static struct _entry* create_child_cond(const char* name, struct _entry* parent)
     return ent;
 }
 
+static char* chomp_string(char* val)
+{
+    int len = strlen(val);
+    char* str = val;
+    int i = 0;
+
+    while(i < len && 
+            (val[i] == ' ' || val[i] == '\t' || val[i] == '\n'))
+        ++i;
+    str += i;
+
+    i = len - 1;
+    while(i >= 0 &&
+            (val[i] == ' ' || val[i] == '\t' || val[i] == '\n'))
+        --i;
+    val[i+1] = '\0';
+
+    return str;
+}
+
 static void parse_line(char* line)
 {
     struct _entry* ent = NULL;
     char token[256];
     char value[256];
+    char* str;
     unsigned int id = 0, secid = 0;
     int intok = 1;
 
@@ -106,12 +127,12 @@ static void parse_line(char* line)
             break;
         else if(intok && (line[id] == '.' || line[id] == '/')) {
             token[secid] = '\0';
-            ent = create_child_cond(token, ent);
+            ent = create_child_cond(chomp_string(token), ent);
             secid = 0;
         }
         else if(intok && (line[id] == ':' || line[id] == '=')) {
             token[secid] = '\0';
-            ent = create_child_cond(token, ent);
+            ent = create_child_cond(chomp_string(token), ent);
             secid = 0;
             intok = 0;
         }
@@ -132,8 +153,9 @@ static void parse_line(char* line)
     value[secid] = '\0';
 
     if(ent) {
-        ent->value = malloc(strlen(value) + 1);
-        strcpy(ent->value, value);
+        str = chomp_string(value);
+        ent->value = malloc(strlen(str) + 1);
+        strcpy(ent->value, str);
     }
 }
 
