@@ -106,13 +106,15 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
 
     size.flags = XCB_ICCCM_SIZE_HINT_P_POSITION
         | XCB_ICCCM_SIZE_HINT_US_POSITION
-        | XCB_ICCCM_SIZE_HINT_P_SIZE
         | XCB_ICCCM_SIZE_HINT_US_SIZE
+        | XCB_ICCCM_SIZE_HINT_P_SIZE
+        | XCB_ICCCM_SIZE_HINT_P_MIN_SIZE
+        | XCB_ICCCM_SIZE_HINT_P_MAX_SIZE
         | XCB_ICCCM_SIZE_HINT_P_WIN_GRAVITY;
     size.x = x;
     size.y = y;
-    size.width = w;
-    size.height = h;
+    size.width  = size.max_width  = size.min_width  = w;
+    size.height = size.max_height = size.min_height = h;
     size.win_gravity = XCB_GRAVITY_STATIC;
     xcb_icccm_set_wm_size_hints(c, win.xcbwin, XCB_ATOM_WM_NORMAL_HINTS, &size);
 
