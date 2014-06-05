@@ -4,6 +4,7 @@
 #include <xcb/xcb.h>
 #include "window.h"
 #include "screen.h"
+#include "config.h"
 
 int main(int argc, char *argv[])
 {
@@ -11,6 +12,12 @@ int main(int argc, char *argv[])
     srv_screen_t* scr;
     srv_screen_t* act;
     srv_window_t win;
+
+    /* Loading the config. */
+    if(!load_config())
+        printf("Couldn't load config.\n");
+    else
+        dump_to_stdout();
 
     /* Opening the connection. */
     c = xcb_connect(NULL, NULL);
@@ -37,6 +44,7 @@ int main(int argc, char *argv[])
 
     pause();
 
+    free_config();
     free_screens(scr);
     xcb_disconnect(c);
     return 0;
