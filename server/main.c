@@ -10,9 +10,16 @@
 int main(int argc, char *argv[])
 {
     xcb_connection_t* c;
+    xcb_gcontext_t gc;
     srv_screen_t* scr;
     srv_screen_t* act;
     srv_window_t win;
+    xcb_generic_event_t* e;
+    const char *lines[] = {
+        "Hello ...",
+        "... World !",
+        NULL
+    };
 
     /* Loading the config. */
     if(!load_config()) {
@@ -38,6 +45,7 @@ int main(int argc, char *argv[])
         printf("Couldn't load the graphics contexts.\n");
         return 1;
     }
+    get_gcontext("normal", &gc);
 
     /* Getting EWMH */
     request_ewmh(c);
@@ -51,7 +59,17 @@ int main(int argc, char *argv[])
     if(!opened(win))
         return 1;
 
-    pause();
+    while((e = xcb_wait_for_event(c))) {
+        switch(e->response_type & ~0x80) {
+            case XCB_EXPOSE:
+                draw_notif(c, &win, gc, 10, lines);
+                xcb_flush(c);
+                break;
+            default:
+                break;
+        }
+        free(e);
+    }
 
     free_gcontexts();
     free_config();
