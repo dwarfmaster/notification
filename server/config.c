@@ -202,9 +202,11 @@ void free_config()
 
 static struct _entry* name_to_entry(const char* name)
 {
-    char* buffer = malloc(strlen(name));
+    char* buffer = malloc(strlen(name) + 1);
+    strcpy(buffer, name);
     char* tok = strtok(buffer, "./");
     struct _entry* act = _root;
+    struct _entry* prev = act;
 
     while(tok) {
         act = find_token_in(tok, act);
@@ -212,16 +214,21 @@ static struct _entry* name_to_entry(const char* name)
             free(buffer);
             return NULL;
         }
+        prev = act;
+        act = act->child;
         tok = strtok(NULL, "./");
     }
 
     free(buffer);
-    return act;
+    return prev;
 }
 
 int has_entry(const char* name)
 {
-    return name_to_entry(name) != NULL;
+    if(name_to_entry(name))
+        return 1;
+    else
+        return 0;
 }
 
 const char* get_string(const char* name)
