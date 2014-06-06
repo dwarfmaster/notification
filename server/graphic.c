@@ -231,4 +231,19 @@ int get_gcontext(const char* name, xcb_gcontext_t* gc)
     return 0;
 }
 
+void draw_notif(xcb_connection_t *c, srv_window_t* win, xcb_gcontext_t gc, uint32_t hline, const char** lines)
+{
+    uint32_t w, h;
+    xcb_point_t angles[5];
+
+    w = win->width - 1;
+    h = win->height - 1;
+
+    angles[0].x = 1; angles[0].y = 1;
+    angles[1].x = w; angles[1].y = 1;
+    angles[2].x = w; angles[2].y = h;
+    angles[3].x = 1; angles[3].y = h;
+    angles[4].x = w/2; angles[4].y = h/2;
+    xcb_poly_point(c, XCB_COORD_MODE_ORIGIN, win->xcbwin, gc, 5, angles);
+}
 
