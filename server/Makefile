@@ -1,4 +1,4 @@
-OBJS=main.o window.o screen.o config.o
+OBJS=main.o window.o screen.o config.o graphic.o
 include ../param.mk
 
 all : $(SERVER)
