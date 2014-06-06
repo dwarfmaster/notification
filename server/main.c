@@ -5,6 +5,7 @@
 #include "window.h"
 #include "screen.h"
 #include "config.h"
+#include "graphic.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,8 +15,10 @@ int main(int argc, char *argv[])
     srv_window_t win;
 
     /* Loading the config. */
-    if(!load_config())
+    if(!load_config()) {
         printf("Couldn't load config.\n");
+        return 1;
+    }
     else
         dump_to_stdout();
 
@@ -28,6 +31,12 @@ int main(int argc, char *argv[])
     while(act) {
         printf("#%p : %ux%u (%u;%u)\n", act->xcbscr, act->x, act->y, act->w, act->h);
         act = act->next;
+    }
+
+    /* Opening the GCs. */
+    if(!load_gcontexts(c, scr)) {
+        printf("Couldn't load the graphics contexts.\n");
+        return 1;
     }
 
     /* Getting EWMH */
@@ -44,6 +53,7 @@ int main(int argc, char *argv[])
 
     pause();
 
+    free_gcontexts();
     free_config();
     free_screens(scr);
     xcb_disconnect(c);
