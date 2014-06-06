@@ -43,6 +43,8 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
         return win;
     }
     win.opened = 1;
+    win.width = w;
+    win.height = h;
 
     /* Creating the window. */
     win.xcbwin = xcb_generate_id(c);

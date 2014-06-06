@@ -6,6 +6,8 @@
 
 typedef struct _srv_window_t {
     xcb_window_t xcbwin;
+    uint32_t width;
+    uint32_t height;
     int opened;
 } srv_window_t;
 
