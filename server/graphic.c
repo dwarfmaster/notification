@@ -226,6 +226,7 @@ int get_gcontext(const char* name, xcb_gcontext_t* gc)
                 *gc = act->gc;
             return 1;
         }
+        act = act->next;
     }
 
     return 0;
