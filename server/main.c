@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         return 1;
 
     /* Opening the window. */
-    win = open_window(c, scr->xcbscr, 800, 450, 100, 100, "Test window");
+    win = open_window(c, scr->xcbscr, 800, 450, 300, 150, "Test window");
     xcb_flush(c);
     if(!opened(win))
         return 1;
