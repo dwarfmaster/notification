@@ -250,19 +250,19 @@ void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint3
     xcb_rectangle_t bg;
     xcb_point_t angles[5];
 
-    w = win->width - 1;
-    h = win->height - 1;
+    w = win->width;
+    h = win->height;
 
     bg.x = bg.y = 0;
     bg.width  = w;
     bg.height = h;
     xcb_poly_rectangle(c, win->xcbwin, gc.bg, 1, &bg);
 
-    angles[0].x = 1; angles[0].y = 1;
-    angles[1].x = w; angles[1].y = 1;
+    angles[0].x = 0; angles[0].y = 0;
+    angles[1].x = w; angles[1].y = 0;
     angles[2].x = w; angles[2].y = h;
-    angles[3].x = 1; angles[3].y = h;
-    angles[4].x = w/2; angles[4].y = h/2;
-    xcb_poly_point(c, XCB_COORD_MODE_ORIGIN, win->xcbwin, gc.fg, 5, angles);
+    angles[3].x = 0; angles[3].y = h;
+    angles[4].x = 0; angles[4].y = 0;
+    xcb_poly_line(c, XCB_COORD_MODE_ORIGIN, win->xcbwin, gc.fg, 5, angles);
 }
 
