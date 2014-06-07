@@ -18,6 +18,8 @@ int main(int argc, char *argv[])
     const char *lines[] = {
         "Hello ...",
         "... World !",
+        "",
+        "This is a really long line.",
         NULL
     };
 
@@ -62,7 +64,7 @@ int main(int argc, char *argv[])
     while((e = xcb_wait_for_event(c))) {
         switch(e->response_type & ~0x80) {
             case XCB_EXPOSE:
-                draw_notif(c, &win, gc, 10, lines);
+                draw_notif(c, &win, gc, 20, lines);
                 xcb_flush(c);
                 break;
             default:
