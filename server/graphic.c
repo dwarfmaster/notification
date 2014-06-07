@@ -204,7 +204,7 @@ int load_gcontexts(xcb_connection_t* c, srv_screen_t* scr)
     entry = strtok(entries, ",");
     while(entry) {
         add_gc(entry, c, scr);
-        entry = strtok(NULL, ",");
+        entry = strtok(entry + strlen(entry) + 1, ",");
     }
 
     free(entries);
