@@ -144,18 +144,6 @@ static void populate_defaults(uint32_t* values)
     values[3] = _font;
 }
 
-static void populate_borders(struct _gcontext* ctx, const char* name, uint32_t w, xcb_connection_t* c, srv_screen_t* scr)
-{
-    char buffer[256];
-    snprintf(buffer, 256, "gc.%s.bc", name);
-
-    if(has_entry(buffer))
-        ctx->gc.border_color = to_color(get_string(buffer), c, scr);
-    else
-        ctx->gc.border_color = _bc;
-    ctx->gc.border_width = w;
-}
-
 static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
 {
     xcb_gcontext_t gc;
@@ -165,6 +153,7 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
     struct _gcontext* ctx;
     ctx = malloc(sizeof(struct _gcontext));
 
+    /* Foreground graphic context. */
     gc = xcb_generate_id(c);
     mask = XCB_GC_FOREGROUND
         | XCB_GC_BACKGROUND
@@ -188,6 +177,7 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
     ctx->gc.fg = gc;
 
+    /* Background graphic context. */
     gc = xcb_generate_id(c);
     mask = XCB_GC_FOREGROUND
         | XCB_GC_BACKGROUND
@@ -199,7 +189,20 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
     ctx->gc.bg = gc;
 
-    populate_borders(ctx, name, values[2], c, scr);
+    /* Border graphic context. */
+    gc = xcb_generate_id(c);
+    mask = XCB_GC_FOREGROUND
+        | XCB_GC_BACKGROUND
+        | XCB_GC_LINE_WIDTH;
+    values[1] = values[0];
+    snprintf(buffer, 256, "gc.%s.bc", name);
+    if(has_entry(buffer))
+        values[0] = to_color(get_string(buffer), c, scr);
+    else
+        values[0] = _bc;
+    xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
+    ctx->gc.bc = gc;
+    ctx->gc.width = values[2];
 
     ctx->name = malloc(strlen(name) + 1);
     strcpy(ctx->name, name);
@@ -289,6 +292,6 @@ void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint3
     angles[2].x = w; angles[2].y = h;
     angles[3].x = 0; angles[3].y = h;
     angles[4].x = 0; angles[4].y = 0;
-    xcb_poly_line(c, XCB_COORD_MODE_ORIGIN, win->xcbwin, gc.fg, 5, angles);
+    xcb_poly_line(c, XCB_COORD_MODE_ORIGIN, win->xcbwin, gc.bc, 5, angles);
 }
 
