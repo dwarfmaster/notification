@@ -269,12 +269,13 @@ int get_gcontext(const char* name, srv_gcontext_t* gc)
 
 void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint32_t hline, const char** lines)
 {
-    uint32_t w, h;
+    uint32_t w, h, i;
     xcb_rectangle_t bg;
     xcb_point_t angles[5];
     uint32_t mask;
     uint32_t values[1];
 
+    /* Hiding X11 borders. */
     mask = XCB_CONFIG_WINDOW_BORDER_WIDTH;
     values[0] = 0;
     xcb_configure_window(c, win->xcbwin, mask, values);
@@ -282,16 +283,29 @@ void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint3
     w = win->width;
     h = win->height;
 
+    /* Drawing background. */
     bg.x = bg.y = 0;
     bg.width  = w;
     bg.height = h;
     xcb_poly_fill_rectangle(c, win->xcbwin, gc.bg, 1, &bg);
 
+    /* Drawing borders. */
     angles[0].x = 0; angles[0].y = 0;
     angles[1].x = w; angles[1].y = 0;
     angles[2].x = w; angles[2].y = h;
     angles[3].x = 0; angles[3].y = h;
     angles[4].x = 0; angles[4].y = 0;
     xcb_poly_line(c, XCB_COORD_MODE_ORIGIN, win->xcbwin, gc.bc, 5, angles);
+
+    /* Drawing text. */
+    /* w and h are for x and y */
+    w = gc.width + 5;
+    h = gc.width + 5 + hline;
+    i = 0;
+    while(lines[i]) {
+        xcb_image_text_8(c, strlen(lines[i]), win->xcbwin, gc.fg, w, h, lines[i]);
+        ++i;
+        h += hline;
+    }
 }
 
