@@ -285,7 +285,7 @@ void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint3
     bg.x = bg.y = 0;
     bg.width  = w;
     bg.height = h;
-    xcb_poly_rectangle(c, win->xcbwin, gc.bg, 1, &bg);
+    xcb_poly_fill_rectangle(c, win->xcbwin, gc.bg, 1, &bg);
 
     angles[0].x = 0; angles[0].y = 0;
     angles[1].x = w; angles[1].y = 0;
