@@ -147,6 +147,8 @@ static void populate_defaults(uint32_t* values)
 static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
 {
     xcb_gcontext_t gc;
+    xcb_query_font_cookie_t cookie;
+    xcb_query_font_reply_t* reply;
     uint32_t mask;
     uint32_t values[4];
     char buffer[256];
@@ -176,6 +178,12 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
 
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
     ctx->gc.fg = gc;
+
+    /* Query the font height. */
+    cookie = xcb_query_font(c, values[3]);
+    reply  = xcb_query_font_reply(c, cookie, NULL);
+    ctx->gc.font_height = reply->font_ascent;
+    free(reply);
 
     /* Background graphic context. */
     gc = xcb_generate_id(c);
@@ -267,13 +275,14 @@ int get_gcontext(const char* name, srv_gcontext_t* gc)
     return 0;
 }
 
-void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint32_t hline, const char** lines)
+void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, const char** lines)
 {
     uint32_t w, h, i;
     xcb_rectangle_t bg;
     xcb_point_t angles[5];
     uint32_t mask;
     uint32_t values[1];
+    uint32_t hline = gc.font_height;
 
     /* Hiding X11 borders. */
     mask = XCB_CONFIG_WINDOW_BORDER_WIDTH;
