@@ -10,7 +10,7 @@
 int main(int argc, char *argv[])
 {
     xcb_connection_t* c;
-    xcb_gcontext_t gc;
+    srv_gcontext_t gc;
     srv_screen_t* scr;
     srv_screen_t* act;
     srv_window_t win;
