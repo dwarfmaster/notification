@@ -269,6 +269,12 @@ void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, uint3
     uint32_t w, h;
     xcb_rectangle_t bg;
     xcb_point_t angles[5];
+    uint32_t mask;
+    uint32_t values[1];
+
+    mask = XCB_CONFIG_WINDOW_BORDER_WIDTH;
+    values[0] = 0;
+    xcb_configure_window(c, win->xcbwin, mask, values);
 
     w = win->width;
     h = win->height;
