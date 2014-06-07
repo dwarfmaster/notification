@@ -9,6 +9,8 @@
 typedef struct _srv_gcontext_t {
     xcb_gcontext_t fg;
     xcb_gcontext_t bg;
+    uint32_t border_width;
+    uint32_t border_color;
 } srv_gcontext_t;
 
 /** Must be called after load_config. */

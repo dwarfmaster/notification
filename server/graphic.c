@@ -15,6 +15,7 @@ static struct _gcontext* _first = NULL;
 
 static xcb_font_t _font;
 static uint32_t _width;
+static uint32_t _bc;
 static uint32_t _fg;
 static uint32_t _bg;
 
@@ -127,6 +128,11 @@ static int load_defaults(xcb_connection_t* c, srv_screen_t* scr)
     else
         _bg = scr->xcbscr->black_pixel;
 
+    if(has_entry("gc.bc"))
+        _bc = to_color(get_string("gc.bc"), c, scr);
+    else
+        _bc = scr->xcbscr->white_pixel;
+
     return 1;
 }
 
@@ -136,6 +142,18 @@ static void populate_defaults(uint32_t* values)
     values[1] = _bg;
     values[2] = _width;
     values[3] = _font;
+}
+
+static void populate_borders(struct _gcontext* ctx, const char* name, uint32_t w, xcb_connection_t* c, srv_screen_t* scr)
+{
+    char buffer[256];
+    snprintf(buffer, 256, "gc.%s.bc", name);
+
+    if(has_entry(buffer))
+        ctx->gc.border_color = to_color(get_string(buffer), c, scr);
+    else
+        ctx->gc.border_color = _bc;
+    ctx->gc.border_width = w;
 }
 
 static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
@@ -180,6 +198,8 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
     values[1] = values[3];
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
     ctx->gc.bg = gc;
+
+    populate_borders(ctx, name, values[2], c, scr);
 
     ctx->name = malloc(strlen(name) + 1);
     strcpy(ctx->name, name);
