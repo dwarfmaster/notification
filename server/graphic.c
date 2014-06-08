@@ -183,7 +183,7 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
     /* Query the font height. */
     cookie = xcb_query_font(c, values[3]);
     reply  = xcb_query_font_reply(c, cookie, NULL);
-    ctx->gc.font_height = reply->font_ascent;
+    ctx->gc.font_height = reply->font_ascent + reply->font_descent;
     free(reply);
 
     /* Background graphic context. */
