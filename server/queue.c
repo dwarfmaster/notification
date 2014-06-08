@@ -7,7 +7,6 @@ srv_queue_t* init_queue(xcb_connection_t* c, srv_screen_t* scr)
     srv_queue_t* q = malloc(sizeof(srv_queue_t));
     q->c        = c;
     q->scr      = scr;
-    q->used     = 0;
     q->first    = NULL;
     q->vert_dec = scr->w - 15;
     q->hori_dec = 15;
@@ -41,7 +40,33 @@ void close_queue(srv_queue_t* q)
 
 static void queue_update(srv_queue_t* q)
 {
-    /* TODO */
+    uint32_t x, y;
+    int toshow = 1;
+    srv_queue_item_t* it = q->first;
+
+    y = 15;
+    while(it) {
+        if(!toshow) {
+            it->on_screen = 0;
+            show_window(q->c, it->notif->win, 0);
+            it = it->next;
+            continue;
+        }
+
+        x = q->vert_dec - it->notif->win.width;
+        if(y + it->notif->win.height > q->scr->h) {
+            it->on_screen = 0;
+            show_window(q->c, it->notif->win, 0);
+            toshow = 0;
+            it = it->next;
+            continue;
+        }
+
+        it->on_screen = 1;
+        show_window(q->c, it->notif->win, 1);
+        move_window(q->c, it->notif->win, x, y);
+        it = it->next;
+    }
 }
 
 srv_queue_item_t* add_notif(srv_queue_t* q, const char* name, const char* text)
@@ -49,11 +74,18 @@ srv_queue_item_t* add_notif(srv_queue_t* q, const char* name, const char* text)
     srv_queue_item_t* last = q->first;
     srv_queue_item_t* it = malloc(sizeof(srv_queue_item_t));
 
-    while(last->next) last = last->next;
+    if(last) {
+        while(last->next) last = last->next;
+        it->prev   = last;
+        last->next = it;
+    }
+    else {
+        it->prev = NULL;
+        q->first = it;
+    }
+
     it->parent = q;
     it->next   = NULL;
-    it->prev   = last;
-    last->next = it;
 
     it->notif = create_notif(q->c, q->scr, 0, name, text);
     queue_update(q);

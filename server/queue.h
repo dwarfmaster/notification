@@ -19,7 +19,6 @@ typedef struct _srv_queue_item_t {
 typedef struct _srv_queue_t {
     xcb_connection_t* c;
     srv_screen_t* scr;
-    uint32_t used;
     uint32_t vert_dec;
     uint32_t hori_dec;
     srv_queue_item_t* first;
