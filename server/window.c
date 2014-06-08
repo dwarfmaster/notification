@@ -138,3 +138,12 @@ void close_window(xcb_connection_t* c, srv_window_t win)
     xcb_destroy_window(c, win.xcbwin);
 }
 
+void show_window(xcb_connection_t* c, srv_window_t win, int toshow)
+{
+    if(toshow)
+        xcb_map_window(c, win.xcbwin);
+    else
+        xcb_unmap_window(c, win.xcbwin);
+}
+
+

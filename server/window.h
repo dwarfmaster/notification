@@ -24,6 +24,7 @@ srv_window_t open_window(xcb_connection_t* c, xcb_screen_t* scr,
         const char* title
         );
 void close_window(xcb_connection_t* c, srv_window_t win);
+void show_window(xcb_connection_t* c, srv_window_t win, int toshow);
 /** Check if the window has been openend : return -1 on failure,
  * 0 if its still pending and 1 if the window has been opened. */
 int opened(srv_window_t win);
