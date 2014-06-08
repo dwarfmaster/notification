@@ -127,3 +127,8 @@ int opened(srv_window_t win)
     return win.opened;
 }
 
+void close_window(xcb_connection_t* c, srv_window_t win)
+{
+    xcb_destroy_window(c, win.xcbwin);
+}
+
