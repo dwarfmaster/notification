@@ -185,13 +185,15 @@ int load_config()
 
 static void free_entry(struct _entry* ent)
 {
-    free_entry(ent->child);
-    free_entry(ent->next);
-    if(ent->name)
-        free(ent->name);
-    if(ent->value)
-        free(ent->value);
-    free(ent);
+    if(ent) {
+        free_entry(ent->child);
+        free_entry(ent->next);
+        if(ent->name)
+            free(ent->name);
+        if(ent->value)
+            free(ent->value);
+        free(ent);
+    }
 }
 
 void free_config()
