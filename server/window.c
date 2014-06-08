@@ -146,4 +146,16 @@ void show_window(xcb_connection_t* c, srv_window_t win, int toshow)
         xcb_unmap_window(c, win.xcbwin);
 }
 
+void move_window(xcb_connection_t* c, srv_window_t win, uint32_t x, uint32_t y)
+{
+    uint32_t mask;
+    uint32_t values[2];
+
+    mask = XCB_CONFIG_WINDOW_X
+        | XCB_CONFIG_WINDOW_Y;
+    values[0] = x;
+    values[1] = y;
+
+    xcb_configure_window(c, win.xcbwin, mask, values);
+}
 
