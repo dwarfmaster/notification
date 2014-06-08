@@ -177,7 +177,8 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
         values[3] = load_font(get_string(buffer), c);
 
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
-    ctx->gc.fg = gc;
+    ctx->gc.fg   = gc;
+    ctx->gc.font = values[3];
 
     /* Query the font height. */
     cookie = xcb_query_font(c, values[3]);

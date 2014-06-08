@@ -10,6 +10,7 @@ typedef struct _srv_gcontext_t {
     xcb_gcontext_t fg;
     xcb_gcontext_t bg;
     xcb_gcontext_t bc;
+    xcb_font_t font;
     uint32_t width;
     uint32_t font_height;
 } srv_gcontext_t;
