@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
     free_gcontexts();
     free_config();
     free_screens(scr);
+    close_ewmh();
     xcb_disconnect(c);
     return 0;
 }

@@ -16,6 +16,12 @@ void request_ewmh(xcb_connection_t* c)
     _ewmh_cookie = xcb_ewmh_init_atoms(c, &_ewmh);
 }
 
+void close_ewmh()
+{
+    if(has_ewmh())
+        xcb_ewmh_connection_wipe(&_ewmh);
+}
+
 int has_ewmh()
 {
     if(_has_ewmh)

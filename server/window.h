@@ -13,6 +13,7 @@ typedef struct _srv_window_t {
 
 /** Request the EWMH data. */
 void request_ewmh(xcb_connection_t* c);
+void close_ewmh();
 /** Check if has EWMH : needed to open windows. */
 int has_ewmh();
 
