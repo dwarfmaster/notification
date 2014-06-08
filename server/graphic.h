@@ -20,7 +20,7 @@ void free_gcontexts();
 int has_gcontext(const char* name);
 int get_gcontext(const char* name, srv_gcontext_t* gc);
 
-void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc,
+void display_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc,
         const char** lines /* An array of lines to be drawn. */
         );
 

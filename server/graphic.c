@@ -275,7 +275,7 @@ int get_gcontext(const char* name, srv_gcontext_t* gc)
     return 0;
 }
 
-void draw_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, const char** lines)
+void display_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, const char** lines)
 {
     uint32_t w, h, i;
     xcb_rectangle_t bg;

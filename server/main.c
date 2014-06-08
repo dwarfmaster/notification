@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     while((e = xcb_wait_for_event(c))) {
         switch(e->response_type & ~0x80) {
             case XCB_EXPOSE:
-                draw_notif(c, &win, gc, lines);
+                display_notif(c, &win, gc, lines);
                 xcb_flush(c);
                 break;
             default:
