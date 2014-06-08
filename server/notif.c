@@ -3,7 +3,6 @@
 #include "config.h"
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 
 struct _word {
     char* word;
@@ -55,8 +54,6 @@ static struct _word* cut_in_words(xcb_connection_t* c, char* text, xcb_font_t fo
     while(words[i].word) {
         reply = xcb_query_text_extents_reply(c, words[i].cookie, NULL);
         words[i].length = reply->overall_width;
-        /* TODO Debug output, to delete */
-        printf("Word \"%s\" has length %u.\n", words[i].word, words[i].length);
         free(reply);
         ++i;
     }
@@ -77,9 +74,6 @@ static uint32_t space_length(xcb_connection_t* c, xcb_font_t font)
     reply  = xcb_query_text_extents_reply(c, cookie, NULL);
     space = reply->overall_width;
     free(reply);
-
-    /* TODO remove, for debug only. */
-    printf("Space length is %u.\n", space);
 
     return space;
 }
@@ -103,8 +97,6 @@ static void add_line(srv_notif_t* notif, struct _word* words, uint32_t beg, uint
     }
     --aline;
     aline[0] = '\0';
-    /* TODO remove, for debug only */
-    printf("Line added : \"%s\"\n", notif->lines[line]);
 }
 
 srv_notif_t* create_notif(xcb_connection_t* c, srv_screen_t* scr, uint32_t y, const char* name, const char* text)
@@ -142,17 +134,17 @@ srv_notif_t* create_notif(xcb_connection_t* c, srv_screen_t* scr, uint32_t y, co
 
     last_i = length = 0;
     line = 0;
-    for(i = 0; words[i].word;) {
+    for(i = 0; words[i].word; ++i) {
         length += words[i].length;
         if(length >= width) {
             add_line(notif, words, last_i, i, line);
             last_i = i;
             ++line;
-            length = 0;
+            length = words[i].length;
         }
-        length += space;
+        if(length != 0)
+            length += space;
 
-        ++i;
         if(line >= size) {
             size += 10;
             notif->lines = realloc(notif->lines, size);
@@ -160,6 +152,10 @@ srv_notif_t* create_notif(xcb_connection_t* c, srv_screen_t* scr, uint32_t y, co
     }
     add_line(notif, words, last_i, i, line);
     ++line;
+    if(line >= size) {
+        size += 1;
+        notif->lines = realloc(notif->lines, size);
+    }
     notif->lines[line] = NULL;
     
     height = line * gc.font_height + gc.width * 2;
