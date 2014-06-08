@@ -23,7 +23,7 @@ static void free_queued(srv_queue_item_t* item)
     if(item == item->parent->first)
         item->parent->first = item->next;
 
-    free_notif(item->parent->c, &item->notif);
+    free_notif(item->parent->c, item->notif);
     free(item);
 }
 
@@ -39,21 +39,39 @@ void close_queue(srv_queue_t* q)
     free(q);
 }
 
+static void queue_update(srv_queue_t* q)
+{
+    /* TODO */
+}
+
 srv_queue_item_t* add_notif(srv_queue_t* q, const char* name, const char* text)
 {
+    srv_queue_item_t* last = q->first;
+    srv_queue_item_t* it = malloc(sizeof(srv_queue_item_t));
+
+    while(last->next) last = last->next;
+    it->parent = q;
+    it->next   = NULL;
+    it->prev   = last;
+    last->next = it;
+
+    it->notif = create_notif(q->c, q->scr, 0, name, text);
+    queue_update(q);
+    return it;
 }
 
 void rm_notif(srv_queue_item_t* item)
 {
+    srv_queue_t* q = item->parent;
     free_queued(item);
-    /* TODO update showed. */
+    queue_update(q);
 }
 
 void draw_queue(srv_queue_t* q)
 {
     srv_queue_item_t* it = q->first;
     while(it && it->on_screen) {
-        draw_notif(q->c, &it->notif);
+        draw_notif(q->c, it->notif);
         it = it->next;
     }
 }

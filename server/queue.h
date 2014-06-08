@@ -9,7 +9,7 @@
 struct _srv_queue_t;
 
 typedef struct _srv_queue_item_t {
-    srv_notif_t notif;
+    srv_notif_t* notif;
     int on_screen;
     struct _srv_queue_item_t* next;
     struct _srv_queue_item_t* prev;
