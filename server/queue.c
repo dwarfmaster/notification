@@ -65,6 +65,8 @@ static void queue_update(srv_queue_t* q)
         it->on_screen = 1;
         show_window(q->c, it->notif->win, 1);
         move_window(q->c, it->notif->win, x, y);
+        y += it->notif->win.height;
+        y += 15;
         it = it->next;
     }
 }
