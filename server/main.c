@@ -6,6 +6,7 @@
 #include "screen.h"
 #include "config.h"
 #include "graphic.h"
+#include "notif.h"
 
 int main(int argc, char *argv[])
 {
@@ -13,15 +14,9 @@ int main(int argc, char *argv[])
     srv_gcontext_t gc;
     srv_screen_t* scr;
     srv_screen_t* act;
-    srv_window_t win;
+    srv_notif_t* notif;
     xcb_generic_event_t* e;
-    const char *lines[] = {
-        "Hello ...",
-        "... World !",
-        "",
-        "This is a really long line.",
-        NULL
-    };
+    const char* text = "Hello world. This is a big text to test my new notification system, and automatic line cut. See you !";
 
     /* Loading the config. */
     if(!load_config()) {
@@ -56,15 +51,13 @@ int main(int argc, char *argv[])
         return 1;
 
     /* Opening the window. */
-    win = open_window(c, scr->xcbscr, 800, 450, 300, 150, "Test window");
+    notif = create_notif(c, scr, 50, "normal", text);
     xcb_flush(c);
-    if(!opened(win))
-        return 1;
 
     while((e = xcb_wait_for_event(c))) {
         switch(e->response_type & ~0x80) {
             case XCB_EXPOSE:
-                display_notif(c, &win, gc, lines);
+                draw_notif(c, notif);
                 xcb_flush(c);
                 break;
             default:
@@ -73,6 +66,7 @@ int main(int argc, char *argv[])
         free(e);
     }
 
+    free_notif(c, notif);
     free_gcontexts();
     free_config();
     free_screens(scr);
