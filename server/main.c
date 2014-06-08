@@ -8,6 +8,7 @@
 #include "config.h"
 #include "graphic.h"
 #include "notif.h"
+#include "queue.h"
 
 int main(int argc, char *argv[])
 {
@@ -15,7 +16,7 @@ int main(int argc, char *argv[])
     srv_gcontext_t gc;
     srv_screen_t* scr;
     srv_screen_t* act;
-    srv_notif_t* notif;
+    srv_queue_t* queue;
     xcb_generic_event_t* e;
     const char* text = "Hello world. This is a big text to test my new notification system, and automatic line cut. See you !";
     time_t prev, new;
@@ -52,8 +53,12 @@ int main(int argc, char *argv[])
     if(!has_ewmh())
         return 1;
 
+    /* Opening the queue. */
+    queue = init_queue(c, scr);
+
     /* Opening the window. */
-    notif = create_notif(c, scr, 50, "normal", text);
+    add_notif(queue, "normal", text);
+    add_notif(queue, "debug", "I'm the best debug notification to be ever prompted to an user.");
     xcb_flush(c);
 
     prev = time(NULL);
@@ -61,7 +66,7 @@ int main(int argc, char *argv[])
         while((e = xcb_poll_for_event(c))) {
             switch(e->response_type & ~0x80) {
                 case XCB_EXPOSE:
-                    draw_notif(c, notif);
+                    draw_queue(queue);
                     xcb_flush(c);
                     break;
                 default:
@@ -75,7 +80,7 @@ int main(int argc, char *argv[])
             break;
     }
 
-    free_notif(c, notif);
+    close_queue(queue);
     free_gcontexts();
     free_config();
     free_screens(scr);
