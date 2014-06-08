@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <xcb/xcb.h>
 #include "window.h"
 #include "screen.h"
@@ -17,6 +18,7 @@ int main(int argc, char *argv[])
     srv_notif_t* notif;
     xcb_generic_event_t* e;
     const char* text = "Hello world. This is a big text to test my new notification system, and automatic line cut. See you !";
+    time_t prev, new;
 
     /* Loading the config. */
     if(!load_config()) {
@@ -54,16 +56,23 @@ int main(int argc, char *argv[])
     notif = create_notif(c, scr, 50, "normal", text);
     xcb_flush(c);
 
-    while((e = xcb_wait_for_event(c))) {
-        switch(e->response_type & ~0x80) {
-            case XCB_EXPOSE:
-                draw_notif(c, notif);
-                xcb_flush(c);
-                break;
-            default:
-                break;
+    prev = time(NULL);
+    while(1) {
+        while((e = xcb_poll_for_event(c))) {
+            switch(e->response_type & ~0x80) {
+                case XCB_EXPOSE:
+                    draw_notif(c, notif);
+                    xcb_flush(c);
+                    break;
+                default:
+                    break;
+            }
+            free(e);
         }
-        free(e);
+
+        new = time(NULL);
+        if(difftime(new, prev) > 5)
+            break;
     }
 
     free_notif(c, notif);
