@@ -309,8 +309,8 @@ void display_notif(xcb_connection_t *c, srv_window_t* win, srv_gcontext_t gc, co
 
     /* Drawing text. */
     /* w and h are for x and y */
-    w = gc.width + 5;
-    h = gc.width + 5 + hline;
+    w = gc.width/2 ;
+    h = gc.width/2 + hline;
     i = 0;
     while(lines[i]) {
         xcb_image_text_8(c, strlen(lines[i]), win->xcbwin, gc.fg, w, h, lines[i]);
