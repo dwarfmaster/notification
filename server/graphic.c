@@ -224,6 +224,8 @@ int load_gcontexts(xcb_connection_t* c, srv_screen_t* scr)
     const char* cfg;
     char* entries;
     char* entry;
+    uint32_t dec, size;
+
     if(!has_entry("gc.list"))
         return 0;
     if(!load_defaults(c, scr))
@@ -233,10 +235,16 @@ int load_gcontexts(xcb_connection_t* c, srv_screen_t* scr)
     entries = malloc(strlen(cfg) + 1);
     strcpy(entries, cfg);
 
+    dec = 0;
+    size = strlen(entries);
     entry = strtok(entries, ",");
     while(entry) {
         add_gc(entry, c, scr);
-        entry = strtok(entry + strlen(entry) + 1, ",");
+        dec += strlen(entry) + 1;
+        if(dec >= size)
+            entry = NULL;
+        else
+            entry = strtok(entries + dec, ",");
     }
 
     free(entries);

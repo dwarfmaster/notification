@@ -17,7 +17,6 @@ srv_screen_t* load_screens(xcb_connection_t* c)
     cookie = xcb_xinerama_query_screens(c);
     reply  = xcb_xinerama_query_screens_reply(c, cookie, NULL);
     it     = xcb_xinerama_query_screens_screen_info_iterator(reply);
-    free(reply);
 
     for(; it.rem; xcb_xinerama_screen_info_next(&it)) {
         act = malloc(sizeof(srv_screen_t));
@@ -37,6 +36,7 @@ srv_screen_t* load_screens(xcb_connection_t* c)
         }
     }
 
+    free(reply);
     return first;
 }
 

@@ -101,6 +101,7 @@ static void add_line(srv_notif_t* notif, struct _word* words, uint32_t beg, uint
         aline[0] = ' ';
         ++aline;
     }
+    --aline;
     aline[0] = '\0';
     /* TODO remove, for debug only */
     printf("Line added : \"%s\"\n", notif->lines[line]);
