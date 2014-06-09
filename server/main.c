@@ -73,8 +73,10 @@ int main(int argc, char *argv[])
     cont = 1;
     while(cont) {
         end = select(maxfd, &toread, NULL, NULL, &timeout);
-        if(end == 0)
+        if(end == 0) {
             rm_notif_cond(queue);
+            xcb_flush(c);
+        }
         else if(end > 0) {
             if(FD_ISSET(cfd, &toread)) {
                 while((e = xcb_poll_for_event(c))) {
