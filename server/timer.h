@@ -3,6 +3,7 @@
 #define DEF_TIMER
 
 #include <time.h>
+#include <sys/times.h>
 #include <stdint.h>
 
 typedef struct _srv_timer_t {
