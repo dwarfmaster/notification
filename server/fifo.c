@@ -61,7 +61,7 @@ srv_order_t get_order_fifo(int size, char* buffer)
     else if(strcmp(str, "notif") != 0)
         return NONE;
 
-    str = strtok(NULL, " \n");
+    str = strtok(NULL, "\n");
     if(!str)
         return NONE;
     if(buffer)
