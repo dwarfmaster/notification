@@ -1,18 +1,21 @@
+OBJS=main.o window.o screen.o config.o graphic.o \
+	 notif.o queue.o timer.o fifo.o
+include ../param.mk
 
-all : server client
+all : $(SERVER)
 
-client :
-	make -C client
+$(SERVER) : $(OBJS)
+	$(CC) $(CFLAGS)    -o $@ $^ $(LDFLAGS)
 
-server :
-	make -C server
+%.o : %.c
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean :
-	make clean -C client
-	make clean -C server
+	@touch $(OBJS) $(SERVER)
+	rm $(OBJS) $(SERVER)
 
 rec : clean all
 
-.PHONY: all client server clean rec
+.PHONY: all clean rec
 
 
