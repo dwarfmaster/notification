@@ -3,8 +3,7 @@ OBJS=main.o window.o screen.o config.o graphic.o \
 LIBS=xcb xcb-ewmh xcb-icccm xcb-xinerama
 CFLAGS=-Wall -Wextra `pkg-config --cflags $(LIBS)` -g -O0
 LDFLAGS=`pkg-config --libs $(LIBS)`
-SERVER=server.prog
-CLIENT=client.prog
+SERVER=xcbnotif
 CC=gcc
 
 all : $(SERVER)
