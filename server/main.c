@@ -31,8 +31,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Couldn't load config.\n");
         return 1;
     }
-    else
-        dump_to_stdout();
 
     /* Opening the connection. */
     c = xcb_connect(NULL, NULL);
