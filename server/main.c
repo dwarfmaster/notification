@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
     queue = init_queue(c, scr);
 
     /* Opening the window. */
-    add_notif(queue, "normal", text);
-    add_notif(queue, "debug", "I'm the best debug notification to be ever prompted to an user.");
+    add_notif(queue, 2000, "normal", text);
+    add_notif(queue, 5000, "debug", "I'm the best debug notification to be ever prompted to an user.");
     xcb_flush(c);
 
     prev = time(NULL);
@@ -75,8 +75,13 @@ int main(int argc, char *argv[])
             free(e);
         }
 
+        if(nearest_end(queue) == 0) {
+            rm_notif_cond(queue);
+            xcb_flush(c);
+        }
+
         new = time(NULL);
-        if(difftime(new, prev) > 5)
+        if(difftime(new, prev) > 7)
             break;
     }
 
