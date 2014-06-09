@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <sys/select.h>
 #include <xcb/xcb.h>
 #include "window.h"
 #include "screen.h"
@@ -9,21 +10,25 @@
 #include "graphic.h"
 #include "notif.h"
 #include "queue.h"
+#include "fifo.h"
 
 int main(int argc, char *argv[])
 {
     xcb_connection_t* c;
-    srv_gcontext_t gc;
     srv_screen_t* scr;
-    srv_screen_t* act;
     srv_queue_t* queue;
     xcb_generic_event_t* e;
-    const char* text = "Hello world. This is a big text to test my new notification system, and automatic line cut. See you !";
-    time_t prev, new;
+    fd_set toread;
+    struct timeval timeout;
+    int cfd, fifofd, maxfd;
+    uint32_t end;
+    srv_order_t order;
+    char buffer[256];
+    int cont;
 
     /* Loading the config. */
     if(!load_config()) {
-        printf("Couldn't load config.\n");
+        fprintf(stderr, "Couldn't load config.\n");
         return 1;
     }
     else
@@ -31,21 +36,16 @@ int main(int argc, char *argv[])
 
     /* Opening the connection. */
     c = xcb_connect(NULL, NULL);
+    cfd = xcb_get_file_descriptor(c);
 
     /* Getting the screens. */
     scr = load_screens(c);
-    act = scr;
-    while(act) {
-        printf("#%p : %ux%u (%u;%u)\n", act->xcbscr, act->x, act->y, act->w, act->h);
-        act = act->next;
-    }
 
     /* Opening the GCs. */
     if(!load_gcontexts(c, scr)) {
-        printf("Couldn't load the graphics contexts.\n");
+        fprintf(stderr, "Couldn't load the graphics contexts.\n");
         return 1;
     }
-    get_gcontext("normal", &gc);
 
     /* Getting EWMH */
     request_ewmh(c);
@@ -56,35 +56,69 @@ int main(int argc, char *argv[])
     /* Opening the queue. */
     queue = init_queue(c, scr);
 
-    /* Opening the window. */
-    add_notif(queue, 2000, "normal", text);
-    add_notif(queue, 5000, "debug", "I'm the best debug notification to be ever prompted to an user.");
-    xcb_flush(c);
+    /* Opening the fifo. */
+    if(!init_fifo()) {
+        fprintf(stderr, "Couldn't open the fifo.\n");
+        return 1;
+    }
+    fifofd = get_fifo_id();
 
-    prev = time(NULL);
-    while(1) {
-        while((e = xcb_poll_for_event(c))) {
-            switch(e->response_type & ~0x80) {
-                case XCB_EXPOSE:
-                    draw_queue(queue);
-                    xcb_flush(c);
-                    break;
-                default:
-                    break;
-            }
-            free(e);
-        }
+    FD_ZERO(&toread);
+    FD_SET(cfd, &toread);
+    FD_SET(fifofd, &toread);
+    end = nearest_end(queue);
+    timeout.tv_sec  = end / 1000;
+    timeout.tv_usec = end % 1000 * 1000;
+    maxfd = (cfd > fifofd ? cfd : fifofd) + 1;
 
-        if(nearest_end(queue) == 0) {
+    cont = 1;
+    while(cont) {
+        end = select(maxfd, &toread, NULL, NULL, &timeout);
+        if(end == 0)
             rm_notif_cond(queue);
-            xcb_flush(c);
+        else if(end > 0) {
+            if(FD_ISSET(cfd, &toread)) {
+                while((e = xcb_poll_for_event(c))) {
+                    switch(e->response_type & ~0x80) {
+                        case XCB_EXPOSE:
+                            draw_queue(queue);
+                            xcb_flush(c);
+                            break;
+                        default:
+                            break;
+                    }
+                    free(e);
+                }
+            } else if(FD_ISSET(fifofd, &toread)) {
+                order = get_order_fifo(256, buffer);
+                switch(order) {
+                    case CLOSE:
+                        /* TODO */
+                        break;
+                    case CLOSE_ALL:
+                        /* TODO */
+                        break;
+                    case NOTIF:
+                        /* TODO */
+                        break;
+                    case END:
+                        cont = 0;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        new = time(NULL);
-        if(difftime(new, prev) > 7)
-            break;
+        FD_ZERO(&toread);
+        FD_SET(cfd, &toread);
+        FD_SET(fifofd, &toread);
+        end = nearest_end(queue);
+        timeout.tv_sec  = end / 1000;
+        timeout.tv_usec = end % 1000 * 1000;
     }
 
+    close_fifo();
     close_queue(queue);
     free_gcontexts();
     free_config();
