@@ -113,3 +113,33 @@ void draw_queue(srv_queue_t* q)
     }
 }
 
+void rm_notif_cond(srv_queue_t* q)
+{
+    srv_queue_item_t* it = q->first;
+    srv_queue_item_t* next;
+
+    while(it) {
+        next = it->next;
+        if(timer_ended(it->timer))
+            free_queued(it);
+        it = next;
+    }
+    queue_update(q);
+}
+
+uint32_t nearest_end(srv_queue_t* q)
+{
+    srv_queue_item_t* it = q->first;
+    uint32_t nearest = 60000;
+    uint32_t left;
+
+    while(it) {
+        left = time_left(it->timer);
+        nearest = (nearest > left ? left : nearest);
+        it = it->next;
+    }
+
+    return nearest;
+}
+
+
