@@ -10,7 +10,7 @@
 #include <sys/types.h>
 
 static int _fifo = -1;
-static const char* _fifo_path = "/tmp/notifier.fifo";
+static const char* _fifo_path = "/tmp/xcbnotif.fifo";
 
 int init_fifo()
 {

@@ -38,9 +38,9 @@ static char* config_path()
     path = malloc(len);
 
     if(xdg)
-        snprintf(path, len, "%s/notify_config", home);
+        snprintf(path, len, "%s/xcbnotif_config", home);
     else
-        snprintf(path, len, "%s/.notify_config", home);
+        snprintf(path, len, "%s/.xcbnotif_config", home);
     return path;
 }
 
