@@ -1,6 +1,7 @@
 
 #include "queue.h"
 #include <stdlib.h>
+#include <string.h>
 
 srv_queue_t* init_queue(xcb_connection_t* c, srv_screen_t* scr)
 {
@@ -142,4 +143,69 @@ uint32_t nearest_end(srv_queue_t* q)
     return nearest;
 }
 
+static int is_number(const char* str)
+{
+    uint32_t i;
+    for(i = 0; i < strlen(str); ++i) {
+        if(str[i] < '0' || str[i] > '9')
+            return 0;
+    }
+    return 1;
+}
+
+static uint32_t to_number(const char* str)
+{
+    uint32_t nb, i, exp, j;
+    nb = 0;
+
+    for(i = 0; i < strlen(str); ++i) {
+        exp = 1;
+        for(j = 0; j < strlen(str) - i - 1; ++j)
+            exp *= 10;
+        nb += (str[i] - '0') * exp;
+    }
+    return nb;
+}
+
+srv_queue_item_t* add_notif_str(srv_queue_t* q, const char* str)
+{
+    uint32_t time;
+    const char* name;
+    const char* text;
+    char* buffer;
+    const char* part;
+    srv_queue_item_t* it;
+
+    buffer = malloc(strlen(str) + 1);
+    strcpy(buffer, str);
+
+    part = strtok(buffer, " ");
+    if(!part) {
+        free(buffer);
+        return NULL;
+    }
+    if(is_number(part)) {
+        time = to_number(part);
+        part = strtok(NULL, " ");
+    }
+    else
+        time = 60000;
+
+    if(!part || !has_gcontext(part)) {
+        free(buffer);
+        return NULL;
+    }
+    name = part;
+
+    part = strtok(NULL, "\n");
+    if(!part) {
+        free(buffer);
+        return NULL;
+    }
+    text = part;
+
+    it = add_notif(q, time, name, text);
+    free(buffer);
+    return it;
+}
 

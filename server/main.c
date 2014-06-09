@@ -99,7 +99,8 @@ int main(int argc, char *argv[])
                         /* TODO */
                         break;
                     case NOTIF:
-                        /* TODO */
+                        add_notif_str(queue, buffer);
+                        xcb_flush(c);
                         break;
                     case END:
                         cont = 0;
