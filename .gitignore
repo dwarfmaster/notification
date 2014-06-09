@@ -3,6 +3,7 @@
 *.so
 *.a
 *.prog
+xcbnotif
 
 # Temp files
 *~
