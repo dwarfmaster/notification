@@ -22,6 +22,8 @@ static void free_queued(srv_queue_item_t* item)
     if(item == item->parent->first)
         item->parent->first = item->next;
 
+    if(item->timer)
+        free(item->timer);
     free_notif(item->parent->c, item->notif);
     free(item);
 }
@@ -71,7 +73,7 @@ static void queue_update(srv_queue_t* q)
     }
 }
 
-srv_queue_item_t* add_notif(srv_queue_t* q, const char* name, const char* text)
+srv_queue_item_t* add_notif(srv_queue_t* q, uint32_t time, const char* name, const char* text)
 {
     srv_queue_item_t* last = q->first;
     srv_queue_item_t* it = malloc(sizeof(srv_queue_item_t));
@@ -90,6 +92,7 @@ srv_queue_item_t* add_notif(srv_queue_t* q, const char* name, const char* text)
     it->next   = NULL;
 
     it->notif = create_notif(q->c, q->scr, 0, name, text);
+    it->timer = start_timer(time);
     queue_update(q);
     return it;
 }
