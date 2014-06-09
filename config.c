@@ -34,7 +34,7 @@ static char* config_path()
 
     len = strlen(home);
     len += (xdg ? 2 : 3); /* /\0 ou /.\0 */
-    len += strlen("notify_config");
+    len += strlen("xcbnotif_config");
     path = malloc(len);
 
     if(xdg)
