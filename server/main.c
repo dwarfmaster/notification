@@ -66,9 +66,8 @@ int main(int argc, char *argv[])
     FD_ZERO(&toread);
     FD_SET(cfd, &toread);
     FD_SET(fifofd, &toread);
-    end = nearest_end(queue);
-    timeout.tv_sec  = end / 1000;
-    timeout.tv_usec = end % 1000 * 1000;
+    timeout.tv_sec  = nearest_end(queue);
+    timeout.tv_usec = 0;
     maxfd = (cfd > fifofd ? cfd : fifofd) + 1;
 
     cont = 1;
@@ -114,9 +113,8 @@ int main(int argc, char *argv[])
         FD_ZERO(&toread);
         FD_SET(cfd, &toread);
         FD_SET(fifofd, &toread);
-        end = nearest_end(queue);
-        timeout.tv_sec  = end / 1000;
-        timeout.tv_usec = end % 1000 * 1000;
+        timeout.tv_sec  = nearest_end(queue);
+        timeout.tv_usec = 0;
     }
 
     close_fifo();
