@@ -34,6 +34,8 @@ void rm_notif_cond(srv_queue_t* q);
 uint32_t nearest_end(srv_queue_t* q);
 void rm_notif(srv_queue_item_t* item);
 void draw_queue(srv_queue_t* q);
+void rm_top(srv_queue_t* q);
+void clear_queue(srv_queue_t* q);
 
 #endif
 

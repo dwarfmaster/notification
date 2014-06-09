@@ -31,6 +31,18 @@ static void free_queued(srv_queue_item_t* item)
 
 void close_queue(srv_queue_t* q)
 {
+    clear_queue(q);
+    free(q);
+}
+
+void rm_top(srv_queue_t* q)
+{
+    if(q->first)
+        rm_notif(q->first);
+}
+
+void clear_queue(srv_queue_t* q)
+{
     srv_queue_item_t* it = q->first;
     srv_queue_item_t* tmp;
     while(it) {
@@ -38,7 +50,6 @@ void close_queue(srv_queue_t* q)
         free_queued(it);
         it = tmp;
     }
-    free(q);
 }
 
 static void queue_update(srv_queue_t* q)
