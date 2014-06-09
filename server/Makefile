@@ -1,4 +1,4 @@
-OBJS=main.o window.o screen.o config.o graphic.o notif.o queue.o
+OBJS=main.o window.o screen.o config.o graphic.o notif.o queue.o timer.o
 include ../param.mk
 
 all : $(SERVER)
