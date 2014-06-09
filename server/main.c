@@ -92,14 +92,13 @@ int main(int argc, char *argv[])
                 order = get_order_fifo(256, buffer);
                 switch(order) {
                     case CLOSE:
-                        /* TODO */
+                        rm_top(queue);
                         break;
                     case CLOSE_ALL:
-                        /* TODO */
+                        clear_queue(queue);
                         break;
                     case NOTIF:
                         add_notif_str(queue, buffer);
-                        xcb_flush(c);
                         break;
                     case END:
                         cont = 0;
@@ -107,6 +106,7 @@ int main(int argc, char *argv[])
                     default:
                         break;
                 }
+                xcb_flush(c);
             }
         }
 
