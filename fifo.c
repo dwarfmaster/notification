@@ -21,11 +21,10 @@ int init_fifo()
 
     if(has_entry("global.fifo"))
         _fifo_path = get_string("global.fifo");
-    if(stat(_fifo_path, &buffer) < 0) {
-        if(mkfifo(_fifo_path, 0777) != 0)
-            return 0;
-    }
-    else if(!S_ISFIFO(buffer.st_mode))
+    if(stat(_fifo_path, &buffer) >= 0)
+        remove(_fifo_path);
+
+    if(mkfifo(_fifo_path, 0777) != 0)
         return 0;
 
     _fifo = open(_fifo_path, O_RDWR | O_NONBLOCK);
