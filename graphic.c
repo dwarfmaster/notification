@@ -109,27 +109,27 @@ static int load_defaults(xcb_connection_t* c, srv_screen_t* scr)
 {
     const char* font_name = _font_name;
 
-    if(has_entry("gc.font"))
-        font_name = get_string("gc.font");
+    if(has_entry("global.gc.font"))
+        font_name = get_string("global.gc.font");
     _font = load_font(font_name, c);
 
-    if(has_entry("gc.width"))
-        _width = get_int("gc.width");
+    if(has_entry("global.gc.width"))
+        _width = get_int("global.gc.width");
     else
         _width = 5;
 
-    if(has_entry("gc.fg"))
-        _fg = to_color(get_string("gc.fg"), c, scr);
+    if(has_entry("global.gc.fg"))
+        _fg = to_color(get_string("global.gc.fg"), c, scr);
     else
         _fg = scr->xcbscr->white_pixel;
 
-    if(has_entry("gc.bg"))
-        _bg = to_color(get_string("gc.bg"), c, scr);
+    if(has_entry("global.gc.bg"))
+        _bg = to_color(get_string("global.gc.bg"), c, scr);
     else
         _bg = scr->xcbscr->black_pixel;
 
-    if(has_entry("gc.bc"))
-        _bc = to_color(get_string("gc.bc"), c, scr);
+    if(has_entry("global.gc.bc"))
+        _bc = to_color(get_string("global.gc.bc"), c, scr);
     else
         _bc = scr->xcbscr->white_pixel;
 
@@ -163,16 +163,16 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
         | XCB_GC_FONT;
     populate_defaults(values);
 
-    snprintf(buffer, 256, "gc.%s.fg", name);
+    snprintf(buffer, 256, "%s.gc.fg", name);
     if(has_entry(buffer))
         values[0] = to_color(get_string(buffer), c, scr);
-    snprintf(buffer, 256, "gc.%s.bg", name);
+    snprintf(buffer, 256, "%s.gc.bg", name);
     if(has_entry(buffer))
         values[1] = to_color(get_string(buffer), c, scr);
-    snprintf(buffer, 256, "gc.%s.width", name);
+    snprintf(buffer, 256, "%s.gc.width", name);
     if(has_entry(buffer))
         values[2] = get_int(buffer);
-    snprintf(buffer, 256, "gc.%s.font", name);
+    snprintf(buffer, 256, "%s.gc.font", name);
     if(has_entry(buffer))
         values[3] = load_font(get_string(buffer), c);
 
@@ -226,12 +226,12 @@ int load_gcontexts(xcb_connection_t* c, srv_screen_t* scr)
     char* entry;
     uint32_t dec, size;
 
-    if(!has_entry("gc.list"))
+    if(!has_entry("global.list"))
         return 0;
     if(!load_defaults(c, scr))
         return 0;
 
-    cfg = get_string("gc.list");
+    cfg = get_string("global.list");
     entries = malloc(strlen(cfg) + 1);
     strcpy(entries, cfg);
 
