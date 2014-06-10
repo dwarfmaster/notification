@@ -7,6 +7,13 @@
 #include "screen.h"
 #include "timer.h"
 
+enum srv_queue_gravity_t {
+    TOP_LEFT,
+    TOP_RIGHT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+};
+
 struct _srv_queue_t;
 
 typedef struct _srv_queue_item_t {
@@ -21,8 +28,13 @@ typedef struct _srv_queue_item_t {
 typedef struct _srv_queue_t {
     xcb_connection_t* c;
     srv_screen_t* scr;
+
+    enum srv_queue_gravity_t gravity;
     uint32_t vert_dec;
     uint32_t hori_dec;
+    uint32_t space;
+    uint32_t init_dec;
+
     srv_queue_item_t* first;
 } srv_queue_t;
 

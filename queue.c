@@ -1,7 +1,72 @@
 
 #include "queue.h"
+#include "config.h"
 #include <stdlib.h>
 #include <string.h>
+
+static enum srv_queue_gravity_t to_gravity(const char* str)
+{
+    if(strcmp(str, "top_left") == 0)
+        return TOP_LEFT;
+    else if(strcmp(str, "top_right") == 0)
+        return TOP_RIGHT;
+    else if(strcmp(str, "bottom_left") == 0)
+        return BOTTOM_LEFT;
+    else if(strcmp(str, "bottom_right") == 0)
+        return BOTTOM_RIGHT;
+    else
+        return TOP_RIGHT;
+}
+
+static void load_queue_config(srv_screen_t* scr, srv_queue_t* q)
+{
+    const char* gravity;
+    uint32_t hori;
+    uint32_t vert;
+
+    gravity = get_string("global.gravity");
+    if(!gravity)
+        q->gravity = TOP_RIGHT;
+    else
+        q->gravity = to_gravity(gravity);
+
+    if(has_entry("global.padding.vert"))
+        vert = get_int("global.padding.vert");
+    else
+        vert = 15;
+    q->init_dec = vert;
+
+    if(has_entry("global.padding.hori"))
+        hori = get_int("global.padding.hori");
+    else
+        hori = 15;
+
+    if(has_entry("global.padding.space"))
+        q->space = get_int("global.padding.space");
+    else
+        q->space = 15;
+
+    switch(q->gravity) {
+        case TOP_LEFT:
+            q->hori_dec = hori;
+            q->vert_dec = vert;
+            break;
+        case TOP_RIGHT:
+            q->hori_dec = scr->w - hori;
+            q->vert_dec = vert;
+            break;
+        case BOTTOM_LEFT:
+            q->hori_dec = hori;
+            q->vert_dec = scr->h - vert;
+            break;
+        case BOTTOM_RIGHT:
+            q->hori_dec = scr->w - hori;
+            q->vert_dec = scr->h - vert;
+            break;
+        default:
+            break;
+    }
+}
 
 srv_queue_t* init_queue(xcb_connection_t* c, srv_screen_t* scr)
 {
@@ -9,8 +74,7 @@ srv_queue_t* init_queue(xcb_connection_t* c, srv_screen_t* scr)
     q->c        = c;
     q->scr      = scr;
     q->first    = NULL;
-    q->vert_dec = scr->w - 15;
-    q->hori_dec = 15;
+    load_queue_config(scr, q);
     return q;
 }
 
@@ -52,13 +116,36 @@ void clear_queue(srv_queue_t* q)
     }
 }
 
+static void get_position(srv_queue_t* q, uint32_t* x, uint32_t* y, uint32_t w, uint32_t h)
+{
+    switch(q->gravity)
+    {
+        case TOP_LEFT:
+            *x = q->hori_dec;
+            break;
+        case TOP_RIGHT:
+            *x = q->hori_dec - w;
+            break;
+        case BOTTOM_LEFT:
+            *x = q->hori_dec;
+            *y = q->vert_dec - *y - h;
+            break;
+        case BOTTOM_RIGHT:
+            *x = q->hori_dec - w;
+            *y = q->vert_dec - *y - h;
+            break;
+        default:
+            break;
+    }
+}
+
 static void queue_update(srv_queue_t* q)
 {
-    uint32_t x, y;
+    uint32_t x, y, dy;
     int toshow = 1;
     srv_queue_item_t* it = q->first;
 
-    y = 15;
+    y = q->init_dec;
     while(it) {
         if(!toshow) {
             it->on_screen = 0;
@@ -67,7 +154,6 @@ static void queue_update(srv_queue_t* q)
             continue;
         }
 
-        x = q->vert_dec - it->notif->win.width;
         if(y + it->notif->win.height > q->scr->h) {
             it->on_screen = 0;
             show_window(q->c, it->notif->win, 0);
@@ -76,11 +162,13 @@ static void queue_update(srv_queue_t* q)
             continue;
         }
 
+        dy = y;
+        get_position(q, &x, &dy, it->notif->win.width, it->notif->win.height);
         it->on_screen = 1;
         show_window(q->c, it->notif->win, 1);
-        move_window(q->c, it->notif->win, x, y);
+        move_window(q->c, it->notif->win, x, dy);
         y += it->notif->win.height;
-        y += 15;
+        y += q->space;
         it = it->next;
     }
 }
