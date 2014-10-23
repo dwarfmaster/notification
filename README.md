@@ -33,7 +33,7 @@ The values accepted are :
       borders of the screen.
     - `hori` : the horizontal padding in pixels.
     - `vert` : the vertical padding in pixels.
-    - `space` : TODO
+    - `space` : The space between two notifications.
   - `gc` : the namespace for the default graphical details.
     - `bg` : the color of the background.
     - `fg` : the color of the text.
