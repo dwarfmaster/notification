@@ -53,10 +53,15 @@ The colors can be written using three syntaxes :
 - `#rrggbb` : the rgb conponents, each in [0-9a-f], but with more precision.
 
 ## Commands
-Commands are of the from : `notif time level text'. `time` is the time in
-seconds (it must be an integer) the notification will be displayed. `level` is
-the name of the level to use for this notification and, finally, `text` is the
-that will be displayed.
+There are five commands accepted :
+- `notif` : creates a new notification. It must have three arguments. The first
+    one is an integer stating the time in seconds the notification must stay on
+    the screen. The second one is the level of the notification. Finally, the
+    third one is the text of the notification.
+- `close` : close the newest notification.
+- `close_all` : close all the notifications.
+- `end` : close all the notifications and stops the server.
+- `kill` : same as `end`.
 
 [1] https://github.com/Cloudef/cow-notify
 
