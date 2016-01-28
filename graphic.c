@@ -204,7 +204,7 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
         | XCB_GC_BACKGROUND
         | XCB_GC_LINE_WIDTH;
     values[1] = values[0];
-    snprintf(buffer, 256, "gc.%s.bc", name);
+    snprintf(buffer, 256, "%s.gc.bc", name);
     if(has_entry(buffer))
         values[0] = to_color(get_string(buffer), c, scr);
     else
