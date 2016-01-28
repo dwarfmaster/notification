@@ -39,6 +39,10 @@ The values accepted are :
     - `fg` : the color of the text.
     - `bc` : the color of the border.
     - `width` : the width of the border.
+    - `font` : the font used for the text. It must be the pattern for an X core
+               font eg `-misc-fixed-*`. If no font is specified, the default
+               one is used : `-*-terminal-medium-r-*-*-14-*-*-*-*-*-iso8859-*`.
+               If this font fails to load, the program will crash.
 - `//mode//` : the namespace to configure a special level. It must have been
     first declared in `global.list`. The values set here override the default
     ones setted in `global`.
