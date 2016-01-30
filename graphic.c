@@ -97,12 +97,19 @@ static uint32_t to_color(const char* str, xcb_connection_t* c, srv_screen_t* scr
     return ret;
 }
 
-static uint32_t load_font(const char* name, xcb_connection_t* c)
+static int load_font(const char* name, uint32_t* fnt, xcb_connection_t* c)
 {
     xcb_font_t font;
-    font = xcb_generate_id(c);
-    xcb_open_font(c, font, strlen(name), name);
-    return font;
+    xcb_void_cookie_t cookie;
+    xcb_generic_error_t *error;
+
+    font   = xcb_generate_id(c);
+    cookie = xcb_open_font_checked(c, font, strlen(name), name);
+    error  = xcb_request_check(c, cookie);
+    if(error)
+        return 0;
+    *fnt = font;
+    return 1;
 }
 
 static int load_defaults(xcb_connection_t* c, srv_screen_t* scr)
@@ -111,7 +118,8 @@ static int load_defaults(xcb_connection_t* c, srv_screen_t* scr)
 
     if(has_entry("global.gc.font"))
         font_name = get_string("global.gc.font");
-    _font = load_font(font_name, c);
+    if(!load_font(font_name, &_font, c))
+        return 0;
 
     if(has_entry("global.gc.width"))
         _width = get_int("global.gc.width");
@@ -174,7 +182,7 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
         values[2] = get_int(buffer);
     snprintf(buffer, 256, "%s.gc.font", name);
     if(has_entry(buffer))
-        values[3] = load_font(get_string(buffer), c);
+        load_font(get_string(buffer), &values[3], c);
 
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
     ctx->gc.fg   = gc;
