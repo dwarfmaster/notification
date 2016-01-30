@@ -181,8 +181,12 @@ static void add_gc(const char* name, xcb_connection_t* c, srv_screen_t* scr)
     if(has_entry(buffer))
         values[2] = get_int(buffer);
     snprintf(buffer, 256, "%s.gc.font", name);
-    if(has_entry(buffer))
-        load_font(get_string(buffer), &values[3], c);
+    if(has_entry(buffer)) {
+        if(!load_font(get_string(buffer), &values[3], c)) {
+            free(ctx);
+            return;
+        }
+    }
 
     xcb_create_gc(c, gc, scr->xcbscr->root, mask, values);
     ctx->gc.fg   = gc;
