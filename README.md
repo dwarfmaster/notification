@@ -42,12 +42,12 @@ The values accepted are :
     - `font` : the font used for the text. It must be the pattern for an X core
                font eg `-misc-fixed-*`. If no font is specified, the default
                one is used : `-*-terminal-medium-r-*-*-14-*-*-*-*-*-iso8859-*`.
-               If this font fails to load, the program will crash.
 - `//mode//` : the namespace to configure a special level. It must have been
     first declared in `global.list`. The values set here override the default
     ones setted in `global`.
   - `gc` : level-specific graphic namespace. It contains accepts the same
-      entries as `global.gc`.
+      entries as `global.gc`. If it contains an invalid valid, the program will
+      not create the level.
   - `width` : Same as `global.width`, but for a specific level.
 
 ### Colors
@@ -61,7 +61,8 @@ There are five commands accepted :
 - `notif` : creates a new notification. It must have three arguments. The first
     one is an integer stating the time in seconds the notification must stay on
     the screen. The second one is the level of the notification. Finally, the
-    third one is the text of the notification.
+    third one is the text of the notification. If the level does not exists,
+    the notifiation will not be printed.
 - `close` : close the newest notification.
 - `close_all` : close all the notifications.
 - `end` : close all the notifications and stops the server.
